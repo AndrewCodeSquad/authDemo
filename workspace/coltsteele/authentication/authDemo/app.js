@@ -49,6 +49,9 @@ app.post('/register', (req, res) => {
     });
 });
 
+// SHOW SECRET PAGE
+app.get('/secret', isLoggedIn, (req, res) => { res.render('secret'); });
+
 // LOGIN ROUTES
 // Show the Login page
 app.get('/login', (req, res) => { res.render('login'); });
@@ -59,7 +62,18 @@ app.post("/login", passport.authenticate("local", {
     failureRedirect: "/login"
   }), function (req, res) { });
 
-// SHOW SECRET PAGE
-app.get('/secret', (req, res) => { res.render('secret'); });
+// Show Log out page
+app.get('/logout', (req, res) => {
+  req.logout();  // this clears the authentication session from database
+  res.redirect('/');
+});
+
+// Check if user is logged in
+function isLoggedIn(req, res, next){  // Middleware functions all take these same 3 arguments
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/login');
+}
 
 app.listen(3000, () => { console.log('Web server started on Port 3000....'); });
